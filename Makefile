@@ -3,13 +3,14 @@
 SRC = execve.s hi.s
 BIN = ${SRC:%.s=%}
 OBJ = ${SRC:%.s=%.o}
+HEX = ${SRC:%.s=%.hex}
 
 ASM     = nasm
 LNK     = ld
 AFLAGS  = -f elf64 -w+all -D$$(uname)
 LFLAGS  = -m elf_x86_64 -s
 
-all: options ${BIN}
+all: options ${BIN} ${HEX}
 
 options:
 	@echo ${BIN} build options:
@@ -24,14 +25,15 @@ ${OBJ}: %.o: %.s
 ${BIN}: %: %.o
 	${LNK} ${LFLAGS} -o $@ $<
 
+${HEX}: %.hex: %
+	objdump -d $< | grep '[0-9a-f]:'|\
+		grep -v 'file'| cut -f2 |\
+		sed 's/^/\\x/g'|\
+		sed "s/ *$$//g" |\
+		sed 's/ /\\x/g'|\
+		tr -d '\n' > $@
+
 clean:
-	rm -rf *.o ${BIN}
-
-raw:
-	printf '\\x'
-	printf '\\x' && objdump -d ./execve | grep "^ " | cut -f2 | tr -d ' ' | tr -d '\n' | sed 's/.\{2\}/&\\x /g'| head -c-3 | tr -d ' ' && echo ' '
-
-x:
-	 objdump -d ./execve|grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-6 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g'
+	rm -rf *.o *.hex ${BIN}
 
 .PHONY: all options clean
