@@ -10,7 +10,7 @@ LNK     = ld
 AFLAGS  = -f elf64 -w+all -D$$(uname)
 LFLAGS  = -m elf_x86_64 -s
 
-all: options ${BIN} ${HEX}
+all: options ${BIN} ${HEX} tiny
 
 options:
 	@echo ${BIN} build options:
@@ -32,6 +32,15 @@ ${HEX}: %.hex: %
 		sed "s/ *$$//g" |\
 		sed 's/ /\\x/g'|\
 		tr -d '\n' > $@
+
+tiny:
+	rm -rf tiny
+	nasm -f bin -o tiny tiny.s
+	chmod +x tiny
+	./tiny ; echo $$?
+	nasm -f bin -o tiny64 tiny64.s
+	chmod +x tiny64
+	./tiny64 ; echo $$?
 
 clean:
 	rm -rf *.o *.hex ${BIN}
