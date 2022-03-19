@@ -1,16 +1,18 @@
 # See LICENSE file for copyright and license details.
 
-SRC = execve.s hi.s
+SRC = execve.s hi.s abc.s
 BIN = ${SRC:%.s=%}
 OBJ = ${SRC:%.s=%.o}
 HEX = ${SRC:%.s=%.hex}
 
 ASM     = nasm
 LNK     = ld
+CC      = cc
+CFLAGS  = -Wall -fno-stack-protector -z execstack
 AFLAGS  = -f elf64 -w+all -D$$(uname)
 LFLAGS  = -m elf_x86_64 -s
 
-all: options ${BIN} ${HEX} tiny
+all: options ${BIN} ${HEX} tiny loader
 
 options:
 	@echo ${BIN} build options:
@@ -31,7 +33,13 @@ ${HEX}: %.hex: %
 		sed 's/^/\\x/g'|\
 		sed "s/ *$$//g" |\
 		sed 's/ /\\x/g'|\
-		tr -d '\n' > $@
+		tr -d '\n'|\
+		fold -w 32 |\
+		sed 's/^/"/'|\
+		sed 's/$$/"/'> $@
+
+loader:
+	${CC} ${CFLAGS} $@.c -o $@
 
 tiny:
 	rm -rf tiny
@@ -43,6 +51,6 @@ tiny:
 	./tiny64 ; echo $$?
 
 clean:
-	rm -rf *.o *.hex ${BIN}
+	rm -rf *.o *.hex ${BIN} loader
 
 .PHONY: all options clean
