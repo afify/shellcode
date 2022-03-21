@@ -1,9 +1,11 @@
 # See LICENSE file for copyright and license details.
+.PHONY: all options clean
+.SUFFIXES: .hex .o
 
-SRC = execve.s hi.s abc.s
-BIN = ${SRC:%.s=%}
-OBJ = ${SRC:%.s=%.o}
-HEX = ${SRC:%.s=%.hex}
+BIN = execve hi abc
+SRC = ${BIN:=.s}
+OBJ = ${BIN:=.o}
+HEX = ${BIN:=.hex}
 
 ASM     = nasm
 LNK     = ld
@@ -21,14 +23,15 @@ options:
 	@echo "ASM     = ${ASM}"
 	@echo "LNK     = ${LNK}"
 
-${OBJ}: %.o: %.s
+${BIN}: ${OBJ}
+	${LNK} ${LFLAGS} -o $@ $@.o
+
+.s.o:
 	${ASM} ${AFLAGS} -o $@ $<
 
-${BIN}: %: %.o
-	${LNK} ${LFLAGS} -o $@ $<
-
-${HEX}: %.hex: %
-	objdump -d $< | grep '[0-9a-f]:'|\
+.o.hex:
+	@echo "objdump -d $< -o $@"
+	@objdump -d $< | grep '[0-9a-f]:'|\
 		grep -v 'file'| cut -f2 |\
 		sed 's/^/\\x/g'|\
 		sed "s/ *$$//g" |\
@@ -37,6 +40,7 @@ ${HEX}: %.hex: %
 		fold -w 32 |\
 		sed 's/^/"/'|\
 		sed 's/$$/"/'> $@
+		@echo ";" >> $@
 
 loader:
 	${CC} ${CFLAGS} $@.c -o $@
@@ -52,5 +56,3 @@ tiny:
 
 clean:
 	rm -rf *.o *.hex ${BIN} loader
-
-.PHONY: all options clean
