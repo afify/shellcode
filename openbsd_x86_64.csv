@@ -1,0 +1,2 @@
+%rax,System call,ret,%rdi,%rsi,%rdx,%r10,%r8,%r9
+59,execve,int,const char *,char *const *,char *const *,,,
