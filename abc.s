@@ -1,7 +1,7 @@
 ; See LICENSE file for copyright and license details.
 BITS 64
-%include "syscalls.s"
-%include "portable.s"
+%include "syscalls.inc"
+%include "portable.inc"
 
 section .text
 	global _start

@@ -2,7 +2,7 @@
 .PHONY: all options clean
 .SUFFIXES: .hex .o
 
-BIN = execve hi abc
+BIN = execve hi abc getchar
 SRC = ${BIN:=.s}
 OBJ = ${BIN:=.o}
 HEX = ${BIN:=.hex}

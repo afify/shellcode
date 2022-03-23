@@ -4,13 +4,17 @@
 %define SYSCALLS_S
 
 %ifdef Linux
-	%define SYS_exit 60
+	%define SYS_read 0
 	%define SYS_write 1
 	%define SYS_execve 59
+	%define SYS_sigaction 13
+	%define SYS_exit 60
 %elifdef OpenBSD
-	%define SYS_exit 1
+	%define SYS_read 3
 	%define SYS_write 4
 	%define SYS_execve 59
+	%define SYS_sigaction 49
+	%define SYS_exit 1
 	%define SYS_pledge 108
 %else
 	%fatal "OS not supported"

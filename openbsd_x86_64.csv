@@ -1,2 +1,4 @@
 %rax,System call,ret,%rdi,%rsi,%rdx,%r10,%r8,%r9
+3,read,ssize_t,int,void *,size_t,,,
+46,sigaction,int,int,const struct sigaction *,struct sigaction *,,,
 59,execve,int,const char *,char *const *,char *const *,,,

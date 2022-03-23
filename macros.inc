@@ -5,6 +5,7 @@
 
 %define EXIT_SUCCESS	0
 %define EXIT_FAILURE	1
+%define STDIN		0
 %define STDOUT		1
 %define STDERR		2
 
