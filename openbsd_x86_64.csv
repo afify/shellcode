@@ -1,4 +1,7 @@
 %rax,System call,ret,%rdi,%rsi,%rdx,%r10,%r8,%r9
+1,exit,void,int,,,,,
 3,read,ssize_t,int,void *,size_t,,,
+4,write,ssize_t,int,const void *,size_t,,,
 46,sigaction,int,int,const struct sigaction *,struct sigaction *,,,
 59,execve,int,const char *,char *const *,char *const *,,,
+108,pledge,int,const char *,const char *,,,,
