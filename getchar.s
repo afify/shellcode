@@ -4,15 +4,13 @@ BITS 64
 %include "signals.inc"
 %include "portable.inc"
 
-%define SIGUSR1      10       ; User-defined signal r1
-
 section .rodata
 	usage_msg:	db "usage: azan [-AaNnUuv]", 10, 0
 	usage_len:	equ $ - usage_msg
 
 section .data
 	dchar: db 1
-	SIGACTION sa
+	SIGACTION sigaction
 
 section .bss
 
@@ -22,11 +20,18 @@ section .text
 _start:
 
 signal:
+	mov rax,sigFPEHandler                       ;set handler to pointer to procSigInt
+	mov qword[sigaction.sa_handler],rax         ;in sigaction structure
+	mov rax,SA_RESTORER | SA_SIGINFO            ;sa_flags
+	mov qword [sigaction.sa_flags],rax
+	mov rax,exit
+	mov qword[sigaction.sa_restorer],rax
+
 	mov rax, SYS_sigaction
 	mov rdi, SIGUSR1	;int sig
-	mov rsi, sa		;const struct sigaction * act
+	mov rsi, sigaction		;const struct sigaction * act
 	mov rdx, 0		;struct sigaction * oact
-	mov r10, 0		;size_t sigsetsize
+	mov r10, NSIG_WORDS	;size_t sigsetsize
 	syscall
 
 read:
@@ -52,3 +57,14 @@ writes:
 
 exit:
 	EEXIT EXIT_SUCCESS
+
+sigFPEHandler:
+    ; rdi=signum, rsi=siginfo_t pointer, rdx=sigcontext*
+    mov     rax,[rdx+UCONTEXT_STRUC.uc_mcontext+SIGCONTEXT_STRUC.rip]       ; get rip where error occured
+	mov rax, SYS_write
+	mov rdi, STDOUT		;unsigned int fd 
+	mov rsi, usage_msg,		;char *buf
+	mov rdx, usage_len		;size_t count
+	syscall
+    ;syscall write,stderr,msgDivisionByZero,msgDivisionByZero.len
+    ret

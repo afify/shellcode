@@ -1,7 +1,7 @@
 ; See LICENSE file for copyright and license details.
 
-%ifndef MACROS_S
-%define MACROS_S
+%ifndef MACROS_INC
+%define MACROS_INC
 
 %define EXIT_SUCCESS	0
 %define EXIT_FAILURE	1
@@ -24,4 +24,4 @@
 	EEXIT EXIT_FAILURE
 %endmacro
 
-%endif ;MACROS_S
+%endif ;MACROS_INC

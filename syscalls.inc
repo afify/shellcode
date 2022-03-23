@@ -1,7 +1,7 @@
 ; See LICENSE file for copyright and license details.
 
-%ifndef SYSCALLS_S
-%define SYSCALLS_S
+%ifndef SYSCALLS_INC
+%define SYSCALLS_INC
 
 %ifdef Linux
 	%define SYS_read 0
@@ -20,4 +20,4 @@
 	%fatal "OS not supported"
 %endif
 
-%endif ;SYSCALLS_S
+%endif ;SYSCALLS_INC

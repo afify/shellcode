@@ -1,7 +1,7 @@
 ; See LICENSE file for copyright and license details.
 
-%ifndef PORTABLE_S
-%define PORTABLE_S
+%ifndef PORTABLE_INC
+%define PORTABLE_INC
 
 %ifdef OpenBSD
 section .note.openbsd.ident note
@@ -17,4 +17,4 @@ section .note.openbsd.ident note
 	dd 0
 %endif
 
-%endif ;PORTABLE_S
+%endif ;PORTABLE_INC
